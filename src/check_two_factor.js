@@ -35,12 +35,9 @@ export default async (ctx) => {
       }, 400
     );
   } catch (err) {
-    if (err.name || err.stack) {
-      return response.json(
-        { message: 'Two-factor verification failed', errors: err },
-        400
-      );
+    if (err.name && err.name === 'NotFoundError') {
+      return response.json({ message: 'Given credentials does not match any user account' }, 401);
     }
-    return response.json({ message: 'Given credentials does not match any user account' }, 401);
+    return response.json({ message: 'Two-factor verification failed' }, 400);
   }
 };
