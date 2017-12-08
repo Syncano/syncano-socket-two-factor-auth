@@ -17,12 +17,12 @@ export default async (ctx) => {
   }
 
   try {
-    const user = axios.post(AUTH_URL, { username, password },
+    const user = await axios.post(AUTH_URL, {username, password},
       {
-        headers: { 'Content-Type': 'application/json', 'X-API-KEY': ctx.meta.token }
+        headers: {'Content-Type': 'application/json', 'X-API-KEY': ctx.meta.token}
       });
-    if (user.two_factor_enabled === false) {
-      return response.json({token: user.user_key, username: user.username});
+    if (user.data.two_factor_enabled === false || user.data.two_factor_enabled === null) {
+      return response.json({token: user.data.user_key, username: user.data.username});
     }
     const checkToken = validateRequired({ two_factor_token });
     if (checkToken.passes === false) {
@@ -30,23 +30,17 @@ export default async (ctx) => {
         { message: 'Please enter two-factor token' }, 401
       );
     }
-    const twoFactorDetails = JSON.parse(user.two_factor_details);
+    const twoFactorDetails = JSON.parse(user.data.two_factor_details);
     const verified = speakeasy.totp.verify({
       secret: twoFactorDetails.secret,
       encoding: 'base32',
       token: two_factor_token
     });
     if (verified) {
-      return response.json({token: user.user_key, username: user.username});
+      return response.json({token: user.data.user_key, username: user.data.username});
     }
     return response.json({ message: 'Invalid two-factor token' }, 401);
   } catch (err) {
-    if (err.name || err.stack) {
-      return response.json(
-        { message: 'Authentication failed', errors: err },
-        401
-      );
-    }
     return response.json({ message: 'Given credentials does not match any user account' }, 401);
   }
 };
