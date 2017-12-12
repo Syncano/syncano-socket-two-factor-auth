@@ -26,6 +26,18 @@ export default async (ctx) => {
         { message: 'Two-factor authentication already enabled' }, 400
       );
     }
+    if (user.two_factor_details === null || user.two_factor_details === '') {
+      return response.json(
+        { message: 'Setup two-factor authentication before verifying' }, 400
+      );
+    }
+
+    try {
+      JSON.parse(user.two_factor_details);
+    } catch (e) {
+      return response.json({ message: 'Setup two-factor authentication before verifying' }, 400);
+    }
+
     const twoFactorDetails = JSON.parse(user.two_factor_details);
     const verified = speakeasy.totp.verify({
       secret: twoFactorDetails.tempSecret,

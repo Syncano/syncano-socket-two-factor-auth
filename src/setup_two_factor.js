@@ -52,7 +52,9 @@ export default async (ctx) => {
     await userToUpdate.update(
       { two_factor_enabled: false, two_factor_details: twoFactorDetailsStringify }
     );
-    return response.json({ message: 'Verify OTP', ...twoFactorDetails});
+    return response.json(
+      { message: 'Two-factor setup successful, verify OTP', ...twoFactorDetails}
+    );
   } catch (err) {
     if (err.name && err.name === 'NotFoundError') {
       return response.json({ message: 'Given credentials does not match any user account' }, 401);
