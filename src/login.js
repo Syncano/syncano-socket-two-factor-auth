@@ -27,7 +27,7 @@ export default async (ctx) => {
     const checkToken = validateRequired({ two_factor_token });
     if (checkToken.passes === false) {
       return response.json(
-        { message: 'Please enter two-factor token' }, 401
+        { message: 'Please enter two-factor token' }, 206
       );
     }
     const twoFactorDetails = JSON.parse(user.data.two_factor_details);

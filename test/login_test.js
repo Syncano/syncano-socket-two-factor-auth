@@ -55,7 +55,7 @@ describe('login', () => {
     const argsMissingRequiredParam = { username: firstUserEmail, password: userPassword };
     requestUrl.post('/')
       .send(argsMissingRequiredParam)
-      .expect(401)
+      .expect(206)
       .end((err, res) => {
         if (err) return done(err);
         assert.propertyVal(res.body,

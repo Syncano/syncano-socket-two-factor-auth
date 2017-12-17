@@ -33,7 +33,7 @@ export default async (ctx) => {
         await userToUpdate.update({ two_factor_enabled: false, two_factor_details: '' });
         return response.json({ message: 'Two-factor authentication disabled' });
       }
-      return response.json({ message: 'Invalid two-factor token' }, 401);
+      return response.json({ message: 'Invalid two-factor token' }, 400);
     }
     return response.json(
       { message: 'Two-factor authentication is not enabled on user account' }, 400

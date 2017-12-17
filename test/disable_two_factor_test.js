@@ -45,7 +45,7 @@ describe('disable_two_factor', () => {
       };
       requestUrl.post('/')
         .send(argsWrongTwoFactorToken)
-        .expect(401)
+        .expect(400)
         .end((err, res) => {
           if (err) return done(err);
           assert.propertyVal(res.body,
