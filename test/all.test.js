@@ -1,5 +1,5 @@
-import './setup_two_factor.test';
-import './verify_token_test';
-import './check_two_factor_test';
-import './login_test';
-import './disable_two_factor_test';
+import './setup-two-factor.test';
+import './verify-token.test';
+import './check-two-factor.test';
+import './login.test';
+import './disable-two-factor.test';

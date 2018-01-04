@@ -3,13 +3,13 @@ import speakeasy from 'speakeasy';
 import { assert } from 'chai';
 import 'dotenv/config';
 
-describe('disable_two_factor', () => {
+describe('disable-two-factor', () => {
   const DISABLE_TWO_FACTOR_URL = `https://api.syncano.io/v2/instances/${process.env.INSTANCE_NAME}/` +
-    'endpoints/sockets/two-factor-auth/disable_two_factor/';
+    'endpoints/sockets/two-factor-auth/disable-two-factor';
   const requestUrl = request(DISABLE_TWO_FACTOR_URL);
 
   const LOGIN_URL = `https://api.syncano.io/v2/instances/${process.env.INSTANCE_NAME}/` +
-    'endpoints/sockets/rest-auth/login/';
+    'endpoints/sockets/rest-auth/login';
   const loginUrl = request(LOGIN_URL);
 
   const firstUserEmail = process.env.TEST_USER_EMAIL1;

@@ -3,14 +3,13 @@ import speakeasy from 'speakeasy';
 import { assert } from 'chai';
 import 'dotenv/config';
 
-
-describe('verify_token', () => {
+describe('verify-token', () => {
   const VERIFY_TOKEN_URL = `https://api.syncano.io/v2/instances/${process.env.INSTANCE_NAME}/` +
-    'endpoints/sockets/two-factor-auth/verify_token/';
+    'endpoints/sockets/two-factor-auth/verify-token';
   const requestUrl = request(VERIFY_TOKEN_URL);
 
   const LOGIN_URL = `https://api.syncano.io/v2/instances/${process.env.INSTANCE_NAME}/` +
-    'endpoints/sockets/rest-auth/login/';
+    'endpoints/sockets/rest-auth/login';
   const loginUrl = request(LOGIN_URL);
 
   const firstUserEmail = process.env.TEST_USER_EMAIL1;

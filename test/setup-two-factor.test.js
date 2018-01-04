@@ -2,34 +2,39 @@ import request from 'supertest';
 import { assert } from 'chai';
 import 'dotenv/config';
 
+describe('setup-two-factor', () => {
+  const TWO_FACTOR_SETUP_URL = `https://api.syncano.io/v2/instances/${process.env.INSTANCE_NAME}/` +
+    'endpoints/sockets/two-factor-auth/setup-two-factor';
+  const requestUrl = request(TWO_FACTOR_SETUP_URL);
 
-describe('check_two_factor', () => {
-  const CHECK_TWO_FACTOR_URL = `https://api.syncano.io/v2/instances/${process.env.INSTANCE_NAME}/` +
-    'endpoints/sockets/two-factor-auth/check_two_factor/';
-  const requestUrl = request(CHECK_TWO_FACTOR_URL);
+  const REGISTER_URL = `https://api.syncano.io/v2/instances/${process.env.INSTANCE_NAME}/` +
+    'endpoints/sockets/rest-auth/register';
+  const registerUrl = request(REGISTER_URL);
 
   const LOGIN_URL = `https://api.syncano.io/v2/instances/${process.env.INSTANCE_NAME}/` +
-    'endpoints/sockets/rest-auth/login/';
+    'endpoints/sockets/rest-auth/login';
   const loginUrl = request(LOGIN_URL);
 
   const firstUserEmail = process.env.TEST_USER_EMAIL1;
   const secondUserEmail = process.env.TEST_USER_EMAIL2;
   const userPassword = process.env.TEST_USER_PASSWORD;
-  let firstUserToken, secondUserToken = '';
+
+  let firstUserToken = '';
 
   before((done) => {
     loginUrl.post('/')
       .send({username: firstUserEmail, password: userPassword})
       .then((res) => {
-        if (res.status === 200) {
-          firstUserToken = res.body.token;
+        if (res.status === 400) {
+          return registerUrl.post('/')
+            .send({username: firstUserEmail, password: userPassword});
         }
-        return loginUrl.post('/')
-          .send({username: secondUserEmail, password: userPassword});
+        firstUserToken = res.body.token;
+        return { status: true };
       })
       .then((res) => {
         if (res.status === 200) {
-          secondUserToken = res.body.token;
+          firstUserToken = res.body.token;
         }
         done();
       })
@@ -38,32 +43,35 @@ describe('check_two_factor', () => {
       });
   });
 
-  it('should return "false" for is_two_factor if two factor authentication not enabled',
-    (done) => {
-      const argsTwoFactorNotEnabled = { username: secondUserEmail, token: secondUserToken };
-      requestUrl.post('/')
-        .send(argsTwoFactorNotEnabled)
-        .expect(200)
-        .end((err, res) => {
-          if (err) return done(err);
-          assert.propertyVal(res.body, 'is_two_factor', false);
-          assert.property(res.body, 'message');
-          done();
-        });
-    });
+  before((done) => {
+    loginUrl.post('/')
+      .send({username: secondUserEmail, password: userPassword})
+      .then((res) => {
+        if (res.status === 400) {
+          return registerUrl.post('/')
+            .send({username: secondUserEmail, password: userPassword});
+        }
+        return { status: true };
+      })
+      .then(() => {
+        done();
+      })
+      .catch((err) => {
+        done(err);
+      });
+  });
 
-  it('should return "true" for is_two_factor if two factor authentication enabled',
+  it('should setup two-factor authentication for  user account if user credentials are valid',
     (done) => {
-      const argsTwoFactorEnabled = {
-        username: firstUserEmail, token: firstUserToken
-      };
+      const args = { username: firstUserEmail, token: firstUserToken };
       requestUrl.post('/')
-        .send(argsTwoFactorEnabled)
+        .send(args)
         .expect(200)
         .end((err, res) => {
           if (err) return done(err);
-          assert.propertyVal(res.body, 'is_two_factor', true);
-          assert.property(res.body, 'message');
+          process.env.TEST_TEMP_SECRET = res.body.tempSecret;
+          assert.propertyVal(res.body, 'message', 'Two-factor setup successful, verify OTP');
+          assert.property(res.body, 'otpURL');
           done();
         });
     });

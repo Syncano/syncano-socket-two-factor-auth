@@ -7,7 +7,6 @@ keywords:
   - one-time password
   - one-time passcode
   - two-factor
-  - two factor
   - totp
   - google authenticator
 classes:
@@ -18,7 +17,7 @@ classes:
       type: boolean
       filter_index: true
 endpoints:
-  setup_two_factor:
+  setup-two-factor:
     description: Setup two-factor authentication for logged in user
     parameters:
       username:
@@ -49,7 +48,7 @@ endpoints:
             {
               "message": "Failed to setup two-factor authentication on user account"
             }
-  verify_token:
+  verify-token:
     description: Verifies token before enabling two-factor authentication to prevent locking user
     parameters:
       username:
@@ -121,7 +120,7 @@ endpoints:
             {
               message: "Invalid two-factor token"
             }
-  disable_two_factor:
+  disable-two-factor:
     description: Disable two-factor authentication for user
     parameters:
       username:
@@ -153,7 +152,7 @@ endpoints:
             {
               "message": "Given credentials does not match any user account"
             }
-  check_two_factor:
+  check-two-factor:
     description: Checks if two factor authentication is enabled on user account
     parameters:
       username:
