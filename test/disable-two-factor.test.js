@@ -4,32 +4,33 @@ import { assert } from 'chai';
 import 'dotenv/config';
 
 describe('disable-two-factor', () => {
-  const DISABLE_TWO_FACTOR_URL = `https://api.syncano.io/v2/instances/${process.env.INSTANCE_NAME}/` +
+  const {
+    INSTANCE_NAME, FIRST_USER_EMAIL, SECOND_USER_EMAIL, TEST_USER_PASSWORD
+  } = process.env;
+
+  const DISABLE_TWO_FACTOR_URL = `https://api.syncano.io/v2/instances/${INSTANCE_NAME}/` +
     'endpoints/sockets/two-factor-auth/disable-two-factor';
   const requestUrl = request(DISABLE_TWO_FACTOR_URL);
 
-  const LOGIN_URL = `https://api.syncano.io/v2/instances/${process.env.INSTANCE_NAME}/` +
+  const LOGIN_URL = `https://api.syncano.io/v2/instances/${INSTANCE_NAME}/` +
     'endpoints/sockets/rest-auth/login';
   const loginUrl = request(LOGIN_URL);
 
-  const firstUserEmail = process.env.TEST_USER_EMAIL1;
-  const secondUserEmail = process.env.TEST_USER_EMAIL2;
-  const userPassword = process.env.TEST_USER_PASSWORD;
-  let firstUserToken, secondUserToken = '';
+  let FIRST_USER_TOKEN, SECOND_USER_TOKEN = '';
 
   before((done) => {
     loginUrl.post('/')
-      .send({username: firstUserEmail, password: userPassword})
+      .send({ username: FIRST_USER_EMAIL, password: TEST_USER_PASSWORD })
       .then((res) => {
         if (res.status === 200) {
-          firstUserToken = res.body.token;
+          FIRST_USER_TOKEN = res.body.token;
         }
         return loginUrl.post('/')
-          .send({username: secondUserEmail, password: userPassword});
+          .send({ username: SECOND_USER_EMAIL, password: TEST_USER_PASSWORD });
       })
       .then((res) => {
         if (res.status === 200) {
-          secondUserToken = res.body.token;
+          SECOND_USER_TOKEN = res.body.token;
         }
         done();
       })
@@ -41,7 +42,7 @@ describe('disable-two-factor', () => {
   it('should return status "400" if wrong two factor token supplied',
     (done) => {
       const argsWrongTwoFactorToken = {
-        username: firstUserEmail, token: firstUserToken, two_factor_token: '112233'
+        username: FIRST_USER_EMAIL, token: FIRST_USER_TOKEN, two_factor_token: '112233'
       };
       requestUrl.post('/')
         .send(argsWrongTwoFactorToken)
@@ -58,7 +59,7 @@ describe('disable-two-factor', () => {
     'two-factor authentication not enabled',
   (done) => {
     const args = {
-      username: secondUserEmail, token: secondUserToken, two_factor_token: '112233'
+      username: SECOND_USER_EMAIL, token: SECOND_USER_TOKEN, two_factor_token: '112233'
     };
     requestUrl.post('/')
       .send(args)
@@ -78,7 +79,7 @@ describe('disable-two-factor', () => {
         encoding: 'base32'
       });
       const argsValidTwoFactorToken = {
-        username: firstUserEmail, token: firstUserToken, two_factor_token: twoFactorToken
+        username: FIRST_USER_EMAIL, token: FIRST_USER_TOKEN, two_factor_token: twoFactorToken
       };
       requestUrl.post('/')
         .send(argsValidTwoFactorToken)
@@ -108,7 +109,7 @@ describe('disable-two-factor', () => {
   it('should return status "401" if wrong token for user supplied',
     (done) => {
       const argsUserWrongToken = {
-        username: firstUserEmail, token: 'wrongToken', two_factor_token: '112233'
+        username: FIRST_USER_EMAIL, token: 'wrongToken', two_factor_token: '112233'
       };
       requestUrl.post('/')
         .send(argsUserWrongToken)

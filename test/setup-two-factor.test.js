@@ -3,38 +3,38 @@ import { assert } from 'chai';
 import 'dotenv/config';
 
 describe('setup-two-factor', () => {
-  const TWO_FACTOR_SETUP_URL = `https://api.syncano.io/v2/instances/${process.env.INSTANCE_NAME}/` +
+  const {
+    INSTANCE_NAME, FIRST_USER_EMAIL, SECOND_USER_EMAIL, TEST_USER_PASSWORD
+  } = process.env;
+
+  const TWO_FACTOR_SETUP_URL = `https://api.syncano.io/v2/instances/${INSTANCE_NAME}/` +
     'endpoints/sockets/two-factor-auth/setup-two-factor';
   const requestUrl = request(TWO_FACTOR_SETUP_URL);
 
-  const REGISTER_URL = `https://api.syncano.io/v2/instances/${process.env.INSTANCE_NAME}/` +
+  const REGISTER_URL = `https://api.syncano.io/v2/instances/${INSTANCE_NAME}/` +
     'endpoints/sockets/rest-auth/register';
   const registerUrl = request(REGISTER_URL);
 
-  const LOGIN_URL = `https://api.syncano.io/v2/instances/${process.env.INSTANCE_NAME}/` +
+  const LOGIN_URL = `https://api.syncano.io/v2/instances/${INSTANCE_NAME}/` +
     'endpoints/sockets/rest-auth/login';
   const loginUrl = request(LOGIN_URL);
 
-  const firstUserEmail = process.env.TEST_USER_EMAIL1;
-  const secondUserEmail = process.env.TEST_USER_EMAIL2;
-  const userPassword = process.env.TEST_USER_PASSWORD;
-
-  let firstUserToken = '';
+  let FIRST_USER_TOKEN = '';
 
   before((done) => {
     loginUrl.post('/')
-      .send({username: firstUserEmail, password: userPassword})
+      .send({ username: FIRST_USER_EMAIL, password: TEST_USER_PASSWORD })
       .then((res) => {
         if (res.status === 400) {
           return registerUrl.post('/')
-            .send({username: firstUserEmail, password: userPassword});
+            .send({ username: FIRST_USER_EMAIL, password: TEST_USER_PASSWORD });
         }
-        firstUserToken = res.body.token;
+        FIRST_USER_TOKEN = res.body.token;
         return { status: true };
       })
       .then((res) => {
         if (res.status === 200) {
-          firstUserToken = res.body.token;
+          FIRST_USER_TOKEN = res.body.token;
         }
         done();
       })
@@ -45,11 +45,11 @@ describe('setup-two-factor', () => {
 
   before((done) => {
     loginUrl.post('/')
-      .send({username: secondUserEmail, password: userPassword})
+      .send({ username: SECOND_USER_EMAIL, password: TEST_USER_PASSWORD })
       .then((res) => {
         if (res.status === 400) {
           return registerUrl.post('/')
-            .send({username: secondUserEmail, password: userPassword});
+            .send({ username: SECOND_USER_EMAIL, password: TEST_USER_PASSWORD });
         }
         return { status: true };
       })
@@ -63,7 +63,7 @@ describe('setup-two-factor', () => {
 
   it('should setup two-factor authentication for  user account if user credentials are valid',
     (done) => {
-      const args = { username: firstUserEmail, token: firstUserToken };
+      const args = { username: FIRST_USER_EMAIL, token: FIRST_USER_TOKEN };
       requestUrl.post('/')
         .send(args)
         .expect(200)
@@ -92,7 +92,7 @@ describe('setup-two-factor', () => {
 
   it('should return status "401" if wrong token for user supplied',
     (done) => {
-      const argsUserWrongToken = { username: firstUserEmail, token: 'wrongToken' };
+      const argsUserWrongToken = { username: FIRST_USER_EMAIL, token: 'wrongToken' };
       requestUrl.post('/')
         .send(argsUserWrongToken)
         .expect(401)

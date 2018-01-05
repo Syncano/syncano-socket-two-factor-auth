@@ -3,20 +3,19 @@ import speakeasy from 'speakeasy';
 import { assert } from 'chai';
 import 'dotenv/config';
 
-
 describe('login', () => {
-  const LOGIN_URL = `https://api.syncano.io/v2/instances/${process.env.INSTANCE_NAME}/` +
+  const {
+    INSTANCE_NAME, FIRST_USER_EMAIL, SECOND_USER_EMAIL, TEST_USER_PASSWORD
+  } = process.env;
+
+  const LOGIN_URL = `https://api.syncano.io/v2/instances/${INSTANCE_NAME}/` +
     'endpoints/sockets/two-factor-auth/login/';
   const requestUrl = request(LOGIN_URL);
-
-  const firstUserEmail = process.env.TEST_USER_EMAIL1;
-  const secondUserEmail = process.env.TEST_USER_EMAIL2;
-  const userPassword = process.env.TEST_USER_PASSWORD;
 
   it('should login user with two factor auth not enabled if valid user details supplied',
     (done) => {
       const args = {
-        username: secondUserEmail, password: userPassword
+        username: SECOND_USER_EMAIL, password: TEST_USER_PASSWORD
       };
       requestUrl.post('/')
         .send(args)
@@ -36,7 +35,7 @@ describe('login', () => {
         encoding: 'base32'
       });
       const argsValidTwoFactorToken = {
-        username: firstUserEmail, password: userPassword, two_factor_token: twoFactorToken
+        username: FIRST_USER_EMAIL, password: TEST_USER_PASSWORD, two_factor_token: twoFactorToken
       };
       requestUrl.post('/')
         .send(argsValidTwoFactorToken)
@@ -52,7 +51,7 @@ describe('login', () => {
   it('should return message "Please enter two-factor token" if two-factor auth enabled on account' +
     ' but two_factor_token not supplied',
   (done) => {
-    const argsMissingRequiredParam = { username: firstUserEmail, password: userPassword };
+    const argsMissingRequiredParam = { username: FIRST_USER_EMAIL, password: TEST_USER_PASSWORD };
     requestUrl.post('/')
       .send(argsMissingRequiredParam)
       .expect(206)
