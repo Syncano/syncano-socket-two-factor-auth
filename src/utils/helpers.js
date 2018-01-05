@@ -1,3 +1,4 @@
+/* eslint no-throw-literal: 0 */
 const checkRequired = (val) => {
   if (val === undefined || val === null) {
     return false;
@@ -6,9 +7,8 @@ const checkRequired = (val) => {
   return str.length > 0;
 };
 
-const validateRequired = (obj) => {
+const validateRequired = (obj, customMessage = 'Validation error(s)', statusCode = 400) => {
   const validateMessages = {};
-  let passes = true;
   Object.keys(obj).forEach((key) => {
     if (!checkRequired(obj[key])) {
       validateMessages[key] = `The ${key} field is required`;
@@ -16,10 +16,8 @@ const validateRequired = (obj) => {
   });
 
   if (Object.keys(validateMessages).length > 0) {
-    passes = false;
-    return { passes, validateMessages };
+    throw ({ customMessage, details: validateMessages, statusCode });
   }
-  return { passes };
 };
 
 export default validateRequired;

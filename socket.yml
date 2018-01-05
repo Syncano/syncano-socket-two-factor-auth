@@ -22,7 +22,7 @@ endpoints:
     parameters:
       username:
         type: string
-        description: "Username of user"
+        description: "User email"
         example: "you@domain.com"
       token:
         type: string
@@ -53,7 +53,7 @@ endpoints:
     parameters:
       username:
         type: string
-        description: "Username of user"
+        description: "User email"
         example: "you@domain.com"
       token:
         type: string
@@ -85,7 +85,7 @@ endpoints:
     parameters:
       username:
         type: string
-        description: "Username of user"
+        description: "User email"
         example: "you@domain.com"
       password:
         type: string
@@ -125,7 +125,7 @@ endpoints:
     parameters:
       username:
         type: string
-        description: "Username of user"
+        description: "User email"
         example: "you@domain.com"
       token:
         type: string
@@ -157,7 +157,7 @@ endpoints:
     parameters:
       username:
         type: string
-        description: "Username of user"
+        description: "User email"
         example: "you@domain.com"
       token:
         type: string

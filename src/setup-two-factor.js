@@ -5,19 +5,12 @@ import QRCode from 'qrcode';
 import validateRequired from './utils/helpers';
 
 export default async (ctx) => {
-  const {response, users} = Syncano(ctx);
+  const { response, users } = Syncano(ctx);
   const { username, token } = ctx.args;
-
-  const checkRequired = validateRequired({ username, token });
-  if (checkRequired.passes === false) {
-    return response.json(
-      { message: 'Validation error(s)', details: checkRequired.validateMessages }, 400
-    );
-  }
 
   const createTwoFactorDetails = () => {
     return new Promise((resolve, reject) => {
-      const secret = speakeasy.generateSecret({length: 20});
+      const secret = speakeasy.generateSecret({ length: 20 });
       QRCode.toDataURL(secret.otpauth_url, (err, url) => {
         if (err) {
           reject({
@@ -36,26 +29,31 @@ export default async (ctx) => {
   };
 
   try {
-    const user = await users.where('username', username).firstOrFail();
+    validateRequired({ username, token });
+    const userToUpdate = await users.where('username', username);
+    const user = await userToUpdate.firstOrFail();
     if (user.user_key !== token) {
       return response.json(
         { message: 'Given credentials does not match any user account' }, 401
       );
     }
-    if (user.two_factor_enabled === true) {
+    if (user.two_factor_enabled) {
       return response.json({ message: 'Two-factor authentication already enabled.' }, 400);
     }
     const twoFactorDetails = await createTwoFactorDetails();
     const { tempSecret } = twoFactorDetails;
     const twoFactorDetailsStringify = JSON.stringify({ tempSecret, secret: '' });
-    const userToUpdate = await users.where('username', username);
     await userToUpdate.update(
       { two_factor_enabled: false, two_factor_details: twoFactorDetailsStringify }
     );
     return response.json(
-      { message: 'Two-factor setup successful, verify OTP', ...twoFactorDetails}
+      { message: 'Two-factor setup successful, verify OTP', ...twoFactorDetails }
     );
   } catch (err) {
+    const { customMessage, details } = err;
+    if (customMessage) {
+      return response.json({ message: customMessage, details }, 400);
+    }
     if (err.name && err.name === 'NotFoundError') {
       return response.json({ message: 'Given credentials does not match any user account' }, 401);
     }
