@@ -1,10 +1,5 @@
-import {expect, assert} from 'chai';
-
-const obj = {a: 24};
-
-describe('check obj', () => {
-  it('obj should not be empty', () => {
-    expect(Object.keys(obj).length > 0).to.equal(true);
-    assert.propertyVal(obj, 'a', 24);
-  });
-});
+import './setup-two-factor.test';
+import './verify-token.test';
+import './check-two-factor.test';
+import './login.test';
+import './disable-two-factor.test';
