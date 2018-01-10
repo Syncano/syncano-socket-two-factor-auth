@@ -23,7 +23,7 @@ Demo web app [repo](https://github.com/Syncano/synacno-react-demo-two-factor-aut
 
 ## Endpoints
 #### setup-two-factor
-This endpoint setup two-factor authentication for logged in user.
+This endpoint sets up two-factor authentication for logged in user.
 
 *_Parameters_*
 
@@ -90,7 +90,7 @@ This helps to determine on the client side if the option to setup or disable two
 ```
 
 #### login
-This endpoint login a user and supports both, normal auth and two-factor authentication
+This endpoint logs in a user and supports both, normal auth and two-factor authentication
 User with two-factor auth enabled will be required to input *two-factor token* along with *username* and *password*
 
 *_Parameters_*
@@ -112,7 +112,7 @@ User with two-factor auth enabled will be required to input *two-factor token* a
 ```
 
 #### disable-two-factor
-This endpoint Disable two-factor authentication on user account
+This endpoint disables two-factor authentication on user account
 
 *_Parameters_*
 
