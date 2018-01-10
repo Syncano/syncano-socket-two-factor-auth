@@ -1,4 +1,5 @@
 # Two-factor Auth Syncano Socket
+[![CircleCI](https://circleci.com/gh/Syncano/syncano-socket-two-factor-auth.svg?style=svg)](https://circleci.com/gh/Syncano/syncano-socket-two-factor-auth)
 
 This socket integrates two-factor authentication to syncano.
 
@@ -7,7 +8,7 @@ This socket integrates two-factor authentication to syncano.
 syncano-cli add two-factor-auth
 ```
 
-### Dependent Socket
+### Dependencies
 * **rest-auth socket**
     
     Since there can be no authentication without first registering to a system, it is important to use the `rest-auth` socket for basic registration.
@@ -130,3 +131,19 @@ This endpoint disables two-factor authentication on user account
   message: "Two-factor authentication disabled"
 }
 ```
+
+### Contributing
+
+#### How to Contribute
+  * Fork this repository
+  * Clone from your fork
+  * Make your contributions (Make sure your work is well tested)
+  * Create Pull request from the fork to this repo
+
+#### Setting up environment variables
+  * Create a `.env` on parent folder
+  * Copy contents of `.env-sample` file to newly created `.env` file and assign appropriate values to the listed variables.
+
+#### Testing
+  * Ensure all your test are written on the `test` directory
+  * Use the command `npm test` to run test
