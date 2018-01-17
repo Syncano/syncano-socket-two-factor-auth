@@ -31,8 +31,8 @@ export default async (ctx) => {
     }
     return response.json({ message: 'Invalid two-factor token' }, 401);
   } catch (err) {
-    const { customMessage, details, statusCode } = err;
-    if (customMessage) {
+    if (err.customMessage) {
+      const { customMessage, details, statusCode } = err;
       return response.json({ message: customMessage, details }, statusCode);
     }
     return response.json({ message: 'Given credentials does not match any user account' }, 401);
