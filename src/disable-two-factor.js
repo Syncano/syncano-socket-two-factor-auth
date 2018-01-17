@@ -33,9 +33,8 @@ export default async (ctx) => {
       { message: 'Two-factor authentication is not enabled on user account' }, 400
     );
   } catch (err) {
-    const { customMessage, details } = err;
-    if (customMessage) {
-      return response.json({ message: customMessage, details }, 400);
+    if (err.customMessage) {
+      return response.json({ message: err.customMessage, details: err.details }, 400);
     }
     if (err.name && err.name === 'NotFoundError') {
       return response.json({ message: 'Given credentials does not match any user account' }, 401);
