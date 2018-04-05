@@ -13,17 +13,22 @@
     ]
   },
   "scripts": {
+    "build": "npm run build:src && npm run build:env",
+    "build:src": "sh ./bin/compile",
+    "build:env": "sh ./bin/compile-env",
     "test:e2e": "cross-env NODE_ENV=test nyc --reporter=html mocha --opts ./test/utils/mocha.opts ./test/all.test.js",
     "test": "npm run lint && npm run test:e2e && nyc report",
     "lint": "esw src test"
   },
   "dependencies": {
+    "@syncano/cli": "^0.11.0",
+    "@syncano/core": "latest",
     "axios": "^0.17.1",
     "qrcode": "^1.0.0",
-    "speakeasy": "^2.0.0",
-    "syncano-server": "beta"
+    "speakeasy": "^2.0.0"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.2",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -40,6 +45,6 @@
     "mocha": "^4.0.1",
     "nyc": "^11.3.0",
     "supertest": "^3.0.0",
-    "syncano-test": "^0.3.3"
+    "@syncano/test": "^0.11.0"
   }
 }

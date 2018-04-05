@@ -2,13 +2,11 @@ name: two-factor-auth
 description: Two-factor authentication socket
 version: 0.0.2
 keywords:
-  - authentication
-  - two-factor authentication
-  - one-time password
-  - one-time passcode
   - two-factor
+  - one-time
+  - password
+  - passcode
   - totp
-  - google authenticator
 classes:
   user:
     - name: two_factor_details
@@ -19,143 +17,181 @@ classes:
 endpoints:
   setup-two-factor:
     description: Setup two-factor authentication for logged in user
-    parameters:
-      username:
-        type: string
-        description: "User email"
-        example: "you@domain.com"
-      token:
-        type: string
-        description: "User token"
-        example: "cb21fac8c7dda8fcd0129b0adb0254dea5c8e"
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 200
-          description: Success
-          example: |
-            {
-              message: "Verify OTP",
-              tempSecret: "LBGDOZBIKARWIRZI",
-              otpURL: "otpauth://totp/SecretKey?secret=LB",
-              dataURL: "data:image/png;base64,iVBORw0KGgoAAAANS"
-            }
-        -
-          exit_code: 400
-          description: Failed
-          example: |
-            {
-              "message": "Failed to setup two-factor authentication on user account"
-            }
+    inputs:
+      properties:
+        username:
+          type: string
+          description: "User email"
+          example: "you@domain.com"
+        token:
+          type: string
+          description: "User token"
+          example: "cb21fac8c7dda8fcd0129b0adb0254dea5c8e"
+    outputs:
+      success:
+        description: Success
+        required:
+          - message
+        properties:
+          message:
+            description: Success data
+            examples:
+              - |
+                {
+                  message: "Verify OTP",
+                  tempSecret: "LBGDOZBIKARWIRZI",
+                  otpURL: "otpauth://totp/SecretKey?secret=LB",
+                  dataURL: "data:image/png;base64,iVBORw0KGgoAAAANS"
+                }
+      fail:
+        exit_code: 400
+        description: Failed
+        required:
+          - message
+        properties:
+          message:
+            description: Error message
+            examples:
+              - |
+                {
+                  "message": "Failed to setup two-factor authentication on user account"
+                }
+
   verify-token:
     description: Verifies token before enabling two-factor authentication to prevent locking user
-    parameters:
-      username:
-        type: string
-        description: "User email"
-        example: "you@domain.com"
-      token:
-        type: string
-        description: "User token"
-        example: "cb21fac8c7dda8fcd0129b0adb0254dea5c8e"
-      two_factor_token:
-        type: string
-        description: "One-time passcode for user"
-        example: "897900"
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 200
-          description: Success
-          example: |
-            {
-              message: "Two-factor authentication enabled"
-            }
-        -
-          exit_code: 400
-          description: Failed
-          example: |
-            {
-              "message": "Invalid two-factor token, verification failed"
-            }
+    inputs:
+      properties:
+        username:
+          type: string
+          description: "User email"
+          example: "you@domain.com"
+        token:
+          type: string
+          description: "User token"
+          example: "cb21fac8c7dda8fcd0129b0adb0254dea5c8e"
+        two_factor_token:
+          type: string
+          description: "One-time passcode for user"
+          example: "897900"
+    outputs:
+      success:
+        description: Success
+        required:
+          - message
+        properties:
+          message:
+            description: Success data
+            examples:
+              - |
+                {
+                  message: "Two-factor authentication enabled"
+                }
+      fail:
+        exit_code: 400
+        description: Failed
+        required:
+          - message
+        properties:
+          message:
+            description: Error message
+            examples:
+              - |
+                {
+                  "message": "Invalid two-factor token, verification failed"
+                }
+
   login:
     description: Login endpoint supports both, normal auth and two-factor authentication
-    parameters:
-      username:
-        type: string
-        description: "User email"
-        example: "you@domain.com"
-      password:
-        type: string
-        description: "User password"
-        example: "user-password"
-      two_factor_token:
-        type: string
-        description: "One-time passcode for user"
-        example: "897900"
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 200
-          description: Success
-          example: |
-            {
-              token: "cb21ff98ac8c7dda8fcd01",
-              username: "you@domain.com"
-            }
-        -
-          exit_code: 409
-          description: No two-factor token input
-          example: |
-            {
-              message: "Please enter two-factor token"
-            }
-        -
-          exit_code: 400
-          description: Invalid two-factor token
-          example: |
-            {
-              message: "Invalid two-factor token"
-            }
+    inputs:
+      properties:
+        username:
+          type: string
+          description: "User email"
+          example: "you@domain.com"
+        password:
+          type: string
+          description: "User password"
+          example: "user-password"
+        two_factor_token:
+          type: string
+          description: "One-time passcode for user"
+          example: "897900"
+    outputs:
+      success:
+        description: Success
+        required:
+          - message
+        properties:
+          message:
+            description: Success data
+            examples:
+              - |
+                {
+                  token: "cb21ff98ac8c7dda8fcd01",
+                  username: "you@domain.com"
+                }
+      fail:
+        exit_code: 400
+        description: Failed
+        required:
+          - message
+        properties:
+          message:
+            description: Error message
+            examples:
+              - |
+                {
+                  message: "Please enter two-factor token"
+                }
+
   disable-two-factor:
     description: Disable two-factor authentication for user
-    parameters:
-      username:
-        type: string
-        description: "User email"
-        example: "you@domain.com"
-      token:
-        type: string
-        description: "User token"
-        example: "cb21fac8c7dda8fcd0129b0adb0254dea5c8e"
-      two_factor_token:
-        type: string
-        description: "One-time passcode for user"
-        example: "897900"
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 200
-          description: Success
-          example: |
-            {
-              message: "Two-factor authentication disabled"
-            }
-        -
-          exit_code: 400
-          description: Failed
-          example: |
-            {
-              "message": "Given credentials does not match any user account"
-            }
+    inputs:
+      properties:
+        username:
+          type: string
+          description: "User email"
+          example: "you@domain.com"
+        token:
+          type: string
+          description: "User token"
+          example: "cb21fac8c7dda8fcd0129b0adb0254dea5c8e"
+        two_factor_token:
+          type: string
+          description: "One-time passcode for user"
+          example: "897900"
+    outputs:
+      success:
+        description: Success
+        required:
+          - message
+        properties:
+          message:
+            description: Success data
+            examples:
+              - |
+                {
+                  message: "Two-factor authentication disabled"
+                }
+      fail:
+        exit_code: 400
+        description: Failed
+        required:
+          - message
+        properties:
+          message:
+            description: Error message
+            examples:
+              - |
+                {
+                  "message": "Given credentials does not match any user account"
+                }
+
   check-two-factor:
     description: Checks if two factor authentication is enabled on user account
-    parameters:
-      username:
+    inputs:
+      properties:
+       username:
         type: string
         description: "User email"
         example: "you@domain.com"
@@ -163,22 +199,31 @@ endpoints:
         type: string
         description: "User token"
         example: "cb21fac8c7dda8fcd0129b0adb0254dea5c8e"
-    response:
-      mimetype: application/json
-      examples:
-        -
-          exit_code: 200
-          description: Success
-          example: |
-            {
-              message: "Two-factor authentication is enabled on user account",
-              is_two_factor: true
-            }
-        -
-          exit_code: 200
-          description: Failed
-          example: |
-            {
-              message: "Two-factor authentication is not enabled on user account",
-              is_two_factor: false
-            }
+    outputs:
+      success:
+        description: Success
+        required:
+          - message
+        properties:
+          message:
+            description: Success data
+            examples:
+              - |
+                {
+                  message: "Two-factor authentication is enabled on user account",
+                  is_two_factor: true
+                }
+      fail:
+        exit_code: 400
+        description: Failed
+        required:
+          - message
+        properties:
+          message:
+            description: Error message
+            examples:
+              - |
+                {
+                  message: "Two-factor authentication is not enabled on user account",
+                  is_two_factor: false
+                } 
