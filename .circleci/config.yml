@@ -55,7 +55,7 @@ jobs:
           key: v6-repo-{{ .Environment.CIRCLE_SHA1 }}
       - add_ssh_keys:
           fingerprints:
-            - "db:4a:01:ed:60:55:e8:9f:49:1e:b1:34:6f:4b:05:01"
+            - "77:ad:88:d8:e2:89:f9:13:a1:03:29:9d:f2:25:48:b1"
       - run: SYNCANO_AUTH_KEY=$SYNCANO_AUTH_KEY SYNCANO_HOST=api.syncano.io npx s submit ${SOCKET_NAME} -b patch
       - run: SYNCANO_AUTH_KEY=$SYNCANO_AUTH_KEY SYNCANO_HOST=api.syncano.io npx s publish ${SOCKET_NAME}
       - run:
