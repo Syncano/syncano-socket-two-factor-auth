@@ -1,10 +1,10 @@
-import Syncano from 'syncano-server';
+import Syncano from '@syncano/core';
 import speakeasy from 'speakeasy';
 
 import validateRequired from './utils/helpers';
 
 export default async (ctx) => {
-  const { response, users } = Syncano(ctx);
+  const { response, users } = new Syncano(ctx);
   const { username, token, two_factor_token } = ctx.args;
 
   try {

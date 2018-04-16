@@ -1,11 +1,11 @@
-import Syncano from 'syncano-server';
+import Syncano from '@syncano/core';
 import speakeasy from 'speakeasy';
 import QRCode from 'qrcode';
 
 import validateRequired from './utils/helpers';
 
 export default async (ctx) => {
-  const { response, users } = Syncano(ctx);
+  const { response, users } = new Syncano(ctx);
   const { username, token } = ctx.args;
 
   const createTwoFactorDetails = () => {

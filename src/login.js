@@ -1,11 +1,11 @@
-import Syncano from 'syncano-server';
+import Syncano from '@syncano/core';
 import speakeasy from 'speakeasy';
 import axios from 'axios';
 
 import validateRequired from './utils/helpers';
 
 export default async (ctx) => {
-  const { response } = Syncano(ctx);
+  const { response } = new Syncano(ctx);
   const { username, password, two_factor_token } = ctx.args;
   const AUTH_URL = `https://api.syncano.io/v2/instances/${ctx.meta.instance}/users/auth/`;
 
